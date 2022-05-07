@@ -6,6 +6,7 @@
 GLFWwindow* window;
 #define GLSL(src) "#version 150 core\n" #src
 
+
 static PyObject* version(PyObject* self){
     return Py_BuildValue("s", "Version 1.0");
 }
@@ -37,21 +38,22 @@ static PyObject* init(PyObject* self, PyObject* args){
     if (glewInit() != GLEW_OK) {
         fprintf(stderr, "Failed to initialize GLEW\n");
     }
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static PyObject* should_window_close(PyObject* self){
-    if (!glfwWindowShouldClose(window)){
+    if (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS){
         Py_RETURN_TRUE;
     }else{
         Py_RETURN_FALSE;
     }
 }
 
+
 static PyObject* render(PyObject* self){
-
-
     glfwSwapBuffers(window);
     glfwPollEvents();
     Py_INCREF(Py_None);
@@ -68,7 +70,15 @@ static PyObject* clear_screen(PyObject* self){
     return Py_None;
 }
 
-static PyObject* render_triangle(PyObject* self){
+static PyObject* render_triangle(PyObject* self, PyObject* args){
+    float x;
+    float y;
+    float size;
+
+    if (!PyArg_ParseTuple(args, "fff", &x, &y, &size)){
+        return NULL;
+    }
+
     // Create Vertex Array Object
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -80,9 +90,9 @@ static PyObject* render_triangle(PyObject* self){
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
     float vertices[] = {
-         0.0f,  0.5f, // Vertex 1 (X, Y)
-         0.5f, -0.5f, // Vertex 2 (X, Y)
-        -0.5f, -0.5f  // Vertex 3 (X, Y)
+         x,  y, // Vertex 1 (X, Y)
+         x+size, y-size, // Vertex 2 (X, Y)
+        x-size, y-size  // Vertex 3 (X, Y)
     };
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -135,7 +145,7 @@ static PyMethodDef myMethods[] = {
     {"init", (PyCFunction)init, METH_VARARGS, "Inits"},
     {"version", (PyCFunction)version, METH_NOARGS, "Returns version"},
     {"not_window_close", (PyCFunction)should_window_close, METH_NOARGS, "Close"},
-    {"render_triangle", (PyCFunction)render_triangle, METH_NOARGS, "Render Triangle"},
+    {"render_triangle", (PyCFunction)render_triangle, METH_VARARGS, "Render Triangle"},
     {"clear", (PyCFunction)clear_screen, METH_NOARGS, "Clears Screen"},
     {"update", (PyCFunction)render, METH_NOARGS, "Render"},
 
