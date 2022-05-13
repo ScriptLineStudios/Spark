@@ -93,9 +93,15 @@ static PyObject* render(PyObject* self){
     return Py_None;
 }
 
-static PyObject* clear_screen(PyObject* self){
+static PyObject* clear_screen(PyObject* self, PyObject* args){
+    float r, g, b;
+
+    if (!PyArg_ParseTuple(args, "(fff)", &r, &g, &b)){
+        return NULL;
+    }
+
     //TODO: Add color argument
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(r, g, b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     Py_INCREF(Py_None);
@@ -215,7 +221,7 @@ static PyMethodDef myMethods[] = {
     {"init", (PyCFunction)init, METH_VARARGS, "Inits"},
     {"version", (PyCFunction)version, METH_NOARGS, "Returns version"},
     {"not_window_close", (PyCFunction)should_window_close, METH_NOARGS, "Close"},
-    {"clear", (PyCFunction)clear_screen, METH_NOARGS, "Clears Screen"},
+    {"clear", (PyCFunction)clear_screen, METH_VARARGS, "Clears Screen"},
     {"render_rect", (PyCFunction)render_rect, METH_VARARGS, "Loads a new rect into memory"},
     {"create_rect", (PyCFunction)create_rect, METH_VARARGS, "Loads a new rect into memory"},
     {"get_fps", (PyCFunction)get_fps, METH_NOARGS, "Loads a new rect into memory"},
