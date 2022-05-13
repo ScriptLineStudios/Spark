@@ -1,11 +1,10 @@
 import spark
 
-spark.init("Hello World This is a test", 1200, 600) 
+spark.init("Window", 1200, 600) 
 
-x = 0.0
-y = 0.5
-size = 0.1
+rect_texture = spark.create_rect(1.0, 1.0, 0.0)
+
 while spark.not_window_close():
-    spark.clear()
-    spark.render_triangle(x, y, size)
+    spark.clear() 
+    spark.render_rect(0.1, 0.1, 0.1, rect_texture)              
     spark.update()
