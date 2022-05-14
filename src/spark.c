@@ -26,6 +26,9 @@ int textureIndex = 0;
 
 GLuint textureShader;
 
+int windowX;
+int windowY;
+
 static PyObject* init(PyObject* self, PyObject* args){
     const char *title;
     int x;
@@ -46,67 +49,28 @@ static PyObject* init(PyObject* self, PyObject* args){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(800, 800, title, NULL, NULL);
+    window = glfwCreateWindow(x, y, title, NULL, NULL);
     if (window == NULL)
 	{
 		glfwTerminate();
 	}
     glfwMakeContextCurrent(window);
     gladLoadGL();
-    glViewport(0, 0, 800, 800);
+    glViewport(0, 0, x, y);
+    glMatrixMode(GL_PROJECTION);
+    float aspect = (float)x / (float)y;
+    glOrtho(-aspect, aspect, -1, 1, -1, 1);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    windowX = x;
+    windowY = y;
+
 
     if (unlockFPS){
         glfwSwapInterval(0);
     }
-
-    //Create a default shader that will be used for drawing textures
-    const char* vertexShaderSource = GLSL(
-                layout (location = 0) in vec3 aPos;
-                layout (location = 1) in vec3 aColor;
-                layout (location = 2) in vec2 aTex;
-
-                out vec3 color;
-                out vec2 texCoord;
-
-                uniform float scale;
-
-                void main()
-                {
-                    gl_Position = vec4(aPos.x + aPos.x * scale, aPos.y + aPos.y * scale, aPos.z + aPos.z * scale, 1.0);
-                    color = aColor;
-                    texCoord = aTex;
-                }
-            );
-    const char* fragmentShaderSource = GLSL(
-            out vec4 FragColor;
-            in vec3 color;
-            in vec2 texCoord;
-            uniform sampler2D tex0;
-
-            void main()
-            {
-                FragColor = texture(tex0, texCoord);
-            }
-        );
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    textureShader = shaderProgram;
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    //End Defualt shader
 
 
     Py_INCREF(Py_None);
@@ -229,7 +193,8 @@ static PyObject* create_rect(PyObject* self, PyObject* args){
 }
 
 static PyObject* render_rect(PyObject* self, PyObject* args){
-    float x, y, size;
+    float x, y;
+    float size;
     int index;
     int r;
     int g;
@@ -243,13 +208,16 @@ static PyObject* render_rect(PyObject* self, PyObject* args){
     float colorG = g/255;
     float colorB = b/255;
 
+    float renderX = x;
+    float renderY = y;
+
     //RENDER TRIANGLE
     GLfloat verticies[] =
     {
-        x,      y+size, 0.0f,  colorR, colorG, colorB,
-        x,      y,      0.0f,  colorR, colorG, colorB,
-        x+size, y,      0.0f,  colorR, colorG, colorB,
-        x+size, y+size, 0.0f,  colorR, colorG, colorB,
+        renderX,      renderY+(size/windowY), 0.0f,  colorR, colorG, colorB,
+        renderX,      renderY,      0.0f,  colorR, colorG, colorB,
+        renderX+(size/windowX), renderY,      0.0f,  colorR, colorG, colorB,
+        renderX+(size/windowX), renderY+(size/windowY), 0.0f, colorR, colorG, colorB,
     };
 
     GLuint indicies[] =
