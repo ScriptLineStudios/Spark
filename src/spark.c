@@ -29,6 +29,7 @@ GLuint textureShader;
 int windowX;
 int windowY;
 
+
 static PyObject* init(PyObject* self, PyObject* args){
     const char *title;
     int x;
@@ -258,6 +259,21 @@ static PyObject* render_rect(PyObject* self, PyObject* args){
     return Py_None; 
 }
 
+static PyObject* key_is_pressed(PyObject* self, PyObject* args){
+    int key;
+
+    if (!PyArg_ParseTuple(args, "i", &key)) return NULL;
+
+    if (glfwGetKey(window, key) == GLFW_PRESS){
+        Py_INCREF(Py_True);
+        return Py_True;
+    }
+    else{
+        Py_INCREF(Py_False);
+        return Py_False;
+    }
+}
+
 static PyMethodDef myMethods[] = {
     {"init", (PyCFunction)init, METH_VARARGS, "Inits"},
     {"version", (PyCFunction)version, METH_NOARGS, "Returns version"},
@@ -268,7 +284,7 @@ static PyMethodDef myMethods[] = {
     {"get_fps", (PyCFunction)get_fps, METH_NOARGS, "Loads a new rect into memory"},
     {"update", (PyCFunction)render, METH_NOARGS, "Render"},
     {"set_title", (PyCFunction)set_title, METH_VARARGS, "Loads a new rect into memory"},
-
+    {"key_is_pressed", (PyCFunction)key_is_pressed, METH_VARARGS, "Checks key pressed"},
 
     {NULL, NULL, 0, NULL}
 };
