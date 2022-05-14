@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb/stb.h>
 
 GLFWwindow* window;
 
@@ -14,7 +15,15 @@ double timeDiff;
 unsigned int counter = 0;
 int FPS;
 
-#define GLSL(src) "#version 150 core\n" #src
+#define GLSL(src) "#version 330 core\n" #src
+
+GLuint shaders[256];
+int shader_index = 0;
+
+GLuint textures[256];
+int textureIndex = 0;
+
+GLuint textureShader;
 
 static PyObject* init(PyObject* self, PyObject* args){
     const char *title;
@@ -43,7 +52,58 @@ static PyObject* init(PyObject* self, PyObject* args){
     glfwMakeContextCurrent(window);
     gladLoadGL();
     glViewport(0, 0, 800, 800);
-    glfwSwapInterval(0);
+    //glfwSwapInterval(0);
+
+    //Create a default shader that will be used for drawing textures
+    const char* vertexShaderSource = GLSL(
+                layout (location = 0) in vec3 aPos;
+                layout (location = 1) in vec3 aColor;
+                layout (location = 2) in vec2 aTex;
+
+                out vec3 color;
+                out vec2 texCoord;
+
+                uniform float scale;
+
+                void main()
+                {
+                    gl_Position = vec4(aPos.x + aPos.x * scale, aPos.y + aPos.y * scale, aPos.z + aPos.z * scale, 1.0);
+                    color = aColor;
+                    texCoord = aTex;
+                }
+            );
+    const char* fragmentShaderSource = GLSL(
+            out vec4 FragColor;
+            in vec3 color;
+            in vec2 texCoord;
+            uniform sampler2D tex0;
+
+            void main()
+            {
+                FragColor = texture(tex0, texCoord);
+            }
+        );
+
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    textureShader = shaderProgram;
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    //End Defualt shader
+
+
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -108,8 +168,6 @@ static PyObject* clear_screen(PyObject* self, PyObject* args){
     return Py_None;
 }
 
-GLuint shaders[256];
-int shader_index = 0;
 
 static PyObject* create_rect(PyObject* self, PyObject* args){
     float r;
@@ -120,20 +178,26 @@ static PyObject* create_rect(PyObject* self, PyObject* args){
     if (!PyArg_ParseTuple(args, "fff", &r, &g, &b)){
         return NULL;
     }
-    printf("%f %f %f", r, g, b);
+
     const char* vertexShaderSource = GLSL(
-            in vec2 position;
-            
-            void main() {
-                gl_Position = vec4(position, 0.0, 1.0);
+            layout (location = 0) in vec3 aPos;
+            layout (location = 1) in vec3 aColor;
+
+            out vec3 outColor;
+
+            void main()
+            {
+                gl_Position = vec4(aPos, 1.0);
+                outColor = aColor;
             }
         );
     const char* fragmentShaderSource = GLSL(
-            out vec4 outColor;
-            uniform vec4 inColor;
+            out vec4 FragColor;
+            in vec3 outColor;
             
-            void main() {
-                outColor = inColor;
+            void main() 
+            {
+                FragColor = vec4(outColor, 1.0);
             }
         );
 
@@ -149,10 +213,6 @@ static PyObject* create_rect(PyObject* self, PyObject* args){
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
-
-    int vertexColorLoaction = glGetUniformLocation(shaderProgram, "inColor");
-    glUseProgram(shaderProgram);
-    glUniform4f(vertexColorLoaction, r, g, b, 1.0f);
 
     shaders[shader_index] = shaderProgram;
     shader_index += 1;
@@ -176,10 +236,10 @@ static PyObject* render_rect(PyObject* self, PyObject* args){
     //RENDER TRIANGLE
     GLfloat verticies[] =
     {
-        x,  y+size, 0.0f,
-        x, y, 0.0f,
-        x+size, y, 0.0f,
-        x+size,  y+size, 0.0f,
+        x,      y+size, 0.0f,  1.0f, 0.0f, 0.0f,
+        x,      y,      0.0f,  0.0f, 1.0f, 0.0f,
+        x+size, y,      0.0f,  0.0f, 0.0f, 1.0f,
+        x+size, y+size, 0.0f,  1.0f, 1.0f, 0.0f
     };
 
     GLuint indicies[] =
@@ -202,8 +262,11 @@ static PyObject* render_rect(PyObject* self, PyObject* args){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -227,6 +290,7 @@ static PyMethodDef myMethods[] = {
     {"get_fps", (PyCFunction)get_fps, METH_NOARGS, "Loads a new rect into memory"},
     {"update", (PyCFunction)render, METH_NOARGS, "Render"},
     {"set_title", (PyCFunction)set_title, METH_VARARGS, "Loads a new rect into memory"},
+
 
     {NULL, NULL, 0, NULL}
 };
