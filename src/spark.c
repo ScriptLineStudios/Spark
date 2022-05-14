@@ -29,6 +29,21 @@ GLuint textureShader;
 int windowX;
 int windowY;
 
+int keys[256];
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    for (int i = 0; i < 256; i++){
+        if (key == i && action == GLFW_PRESS)
+        {
+            keys[i] = 1;
+        }
+        else if (key == i && action == GLFW_RELEASE){
+            keys[i] = 0;
+        }
+    }
+}
+
 
 static PyObject* init(PyObject* self, PyObject* args){
     const char *title;
@@ -56,6 +71,7 @@ static PyObject* init(PyObject* self, PyObject* args){
 		glfwTerminate();
 	}
     glfwMakeContextCurrent(window);
+    glfwSetKeyCallback(window, key_callback);
     gladLoadGL();
     glViewport(0, 0, x, y);
     glMatrixMode(GL_PROJECTION);
@@ -72,6 +88,9 @@ static PyObject* init(PyObject* self, PyObject* args){
     if (unlockFPS){
         glfwSwapInterval(0);
     }
+    else{
+        glfwSwapInterval(1);
+    } 
 
 
     Py_INCREF(Py_None);
@@ -264,7 +283,7 @@ static PyObject* key_is_pressed(PyObject* self, PyObject* args){
 
     if (!PyArg_ParseTuple(args, "i", &key)) return NULL;
 
-    if (glfwGetKey(window, key) == GLFW_PRESS){
+    if (keys[key] == 1){
         Py_INCREF(Py_True);
         return Py_True;
     }
