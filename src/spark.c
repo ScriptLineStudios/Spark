@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb/stb.h>
+#include <stdbool.h>
 
 GLFWwindow* window;
 
@@ -29,8 +30,9 @@ static PyObject* init(PyObject* self, PyObject* args){
     const char *title;
     int x;
     int y;
+    bool unlockFPS = false;
 
-    if (!PyArg_ParseTuple(args, "sii", &title, &x, &y)){
+    if (!PyArg_ParseTuple(args, "siib", &title, &x, &y, &unlockFPS)){
         return NULL;
     }
 
@@ -52,7 +54,10 @@ static PyObject* init(PyObject* self, PyObject* args){
     glfwMakeContextCurrent(window);
     gladLoadGL();
     glViewport(0, 0, 800, 800);
-    //glfwSwapInterval(0);
+
+    if (unlockFPS){
+        glfwSwapInterval(0);
+    }
 
     //Create a default shader that will be used for drawing textures
     const char* vertexShaderSource = GLSL(
@@ -224,22 +229,27 @@ static PyObject* create_rect(PyObject* self, PyObject* args){
 }
 
 static PyObject* render_rect(PyObject* self, PyObject* args){
-    float x;
-    float y;
-    float size;
+    float x, y, size;
     int index;
+    int r;
+    int g;
+    int b;
 
-    if (!PyArg_ParseTuple(args, "fffi", &x, &y, &size, &index)){
+    if (!PyArg_ParseTuple(args, "i(ff)(iii)f", &index, &x, &y, &r,&g,&b, &size)){
         return NULL;
     }
+
+    float colorR = r/255;
+    float colorG = g/255;
+    float colorB = b/255;
 
     //RENDER TRIANGLE
     GLfloat verticies[] =
     {
-        x,      y+size, 0.0f,  1.0f, 0.0f, 0.0f,
-        x,      y,      0.0f,  0.0f, 1.0f, 0.0f,
-        x+size, y,      0.0f,  0.0f, 0.0f, 1.0f,
-        x+size, y+size, 0.0f,  1.0f, 1.0f, 0.0f
+        x,      y+size, 0.0f,  colorR, colorG, colorB,
+        x,      y,      0.0f,  colorR, colorG, colorB,
+        x+size, y,      0.0f,  colorR, colorG, colorB,
+        x+size, y+size, 0.0f,  colorR, colorG, colorB,
     };
 
     GLuint indicies[] =
