@@ -24,6 +24,8 @@ int shader_index = 0;
 GLuint textures[256];
 int textureIndex = 0;
 
+GLuint textureShaders[256];
+
 GLuint textureShader;
 
 int windowX;
@@ -92,7 +94,6 @@ static PyObject* init(PyObject* self, PyObject* args){
         glfwSwapInterval(1);
     } 
 
-
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -122,6 +123,7 @@ static PyObject* set_title(PyObject* self, PyObject* args){
     return Py_None;
 }
 
+
 static PyObject* render(PyObject* self){
     crntTime = glfwGetTime();
     timeDiff = crntTime - prevTime;
@@ -149,44 +151,50 @@ static PyObject* clear_screen(PyObject* self, PyObject* args){
         return NULL;
     }
 
-    //TODO: Add color argument
     glClearColor(r, g, b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     Py_INCREF(Py_None);
     return Py_None;
 }
-
+GLuint textureToDraw;
 
 static PyObject* create_rect(PyObject* self, PyObject* args){
     float r;
     float g;
     float b;
 
-
     if (!PyArg_ParseTuple(args, "fff", &r, &g, &b)){
         return NULL;
     }
 
     const char* vertexShaderSource = GLSL(
-            layout (location = 0) in vec3 aPos;
+            layout (location = 0) in vec3 aPos; 
             layout (location = 1) in vec3 aColor;
+            layout (location = 2) in vec2 aTex;
 
             out vec3 outColor;
+
+            out vec2 texCoord;
 
             void main()
             {
                 gl_Position = vec4(aPos, 1.0);
                 outColor = aColor;
+                texCoord = aTex;
             }
         );
     const char* fragmentShaderSource = GLSL(
             out vec4 FragColor;
             in vec3 outColor;
+
+            in vec2 texCoord;
+
+            uniform sampler2D tex0;
             
             void main() 
             {
-                FragColor = vec4(outColor, 1.0);
+                FragColor = texture(tex0, texCoord);
             }
         );
 
@@ -208,6 +216,33 @@ static PyObject* create_rect(PyObject* self, PyObject* args){
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    int imgWidth, imgHeight, colorChannels;
+    //stbi_set_flip_vertically_on_load(true);
+    unsigned char* bytes = stbi_load("examples/player_walk2.png", &imgWidth, &imgHeight, &colorChannels, 0);
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(bytes);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    GLuint tex0Uni = glGetUniformLocation(shaders[shader_index-1], "tex0");
+    glUseProgram(shaders[shader_index-1]);
+    glUniform1i(tex0Uni, 0);
+
+    textureToDraw = texture;
 
     return PyLong_FromLong(shader_index-1);
 }
@@ -231,13 +266,12 @@ static PyObject* render_rect(PyObject* self, PyObject* args){
     float renderX = x;
     float renderY = y;
 
-    //RENDER TRIANGLE
     GLfloat verticies[] =
     {
-        renderX,      renderY+(size/windowY), 0.0f,  colorR, colorG, colorB,
-        renderX,      renderY,      0.0f,  colorR, colorG, colorB,
-        renderX+(size/windowX), renderY,      0.0f,  colorR, colorG, colorB,
-        renderX+(size/windowX), renderY+(size/windowY), 0.0f, colorR, colorG, colorB,
+        renderX,      renderY+(size/windowY),           0.0f,   colorR, colorG, colorB, 0.0f, 0.0f, 
+        renderX,      renderY,                          0.0f,   colorR, colorG, colorB, 0.0f, 1.0f,
+        renderX+(size/windowX), renderY,                0.0f,   colorR, colorG, colorB, 1.0f, 1.0f,
+        renderX+(size/windowX), renderY+(size/windowY), 0.0f,   colorR, colorG, colorB, 1.0f, 0.0f
     };
 
     GLuint indicies[] =
@@ -260,21 +294,27 @@ static PyObject* render_rect(PyObject* self, PyObject* args){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
-	glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+    
     glUseProgram(shaders[index]);
+    glBindTexture(GL_TEXTURE_2D, textureToDraw);
+
     glBindVertexArray(VAO);  //Render Triangle
     glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
-    
-    Py_INCREF(Py_None);
+
+    Py_INCREF(Py_None);                       
     return Py_None; 
 }
 
@@ -304,7 +344,7 @@ static PyMethodDef myMethods[] = {
     {"update", (PyCFunction)render, METH_NOARGS, "Render"},
     {"set_title", (PyCFunction)set_title, METH_VARARGS, "Loads a new rect into memory"},
     {"key_is_pressed", (PyCFunction)key_is_pressed, METH_VARARGS, "Checks key pressed"},
-
+    //{"load_texture", (PyCFunction)load_texture, METH_VARARGS, "Checks key pressed"},
     {NULL, NULL, 0, NULL}
 };
 
