@@ -33,7 +33,7 @@ int windowY;
 
 int keys[256];
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     for (int i = 0; i < 256; i++){
         if (key == i && action == GLFW_PRESS)
@@ -73,7 +73,7 @@ static PyObject* init(PyObject* self, PyObject* args){
 		glfwTerminate();
 	}
     glfwMakeContextCurrent(window);
-    glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, keyCallback);
     gladLoadGL();
     glViewport(0, 0, x, y);
     glMatrixMode(GL_PROJECTION);
@@ -96,7 +96,7 @@ static PyObject* init(PyObject* self, PyObject* args){
     return Py_None;
 }
 
-static PyObject* should_window_close(PyObject* self){
+static PyObject* windowClose(PyObject* self){
     if (!glfwWindowShouldClose(window)){
         Py_RETURN_TRUE;
     }else{
@@ -104,11 +104,11 @@ static PyObject* should_window_close(PyObject* self){
     }
 }
 
-static PyObject* get_fps(PyObject* self){
+static PyObject* getFps(PyObject* self){
     return PyLong_FromLong(FPS);
 }
 
-static PyObject* set_title(PyObject* self, PyObject* args){
+static PyObject* setTitle(PyObject* self, PyObject* args){
     const char * title;
 
     if (!PyArg_ParseTuple(args, "s", &title)){
@@ -142,7 +142,7 @@ static PyObject* render(PyObject* self){
     return Py_None;
 }
 
-static PyObject* clear_screen(PyObject* self, PyObject* args){
+static PyObject* clearScreen(PyObject* self, PyObject* args){
     float r, g, b;
 
     if (!PyArg_ParseTuple(args, "(fff)", &r, &g, &b)){
@@ -157,7 +157,7 @@ static PyObject* clear_screen(PyObject* self, PyObject* args){
 }
 GLuint textures[256];
 
-static PyObject* create_rect(PyObject* self, PyObject* args){
+static PyObject* createRect(PyObject* self, PyObject* args){
     const char * textureLocation = NULL;
 
     if (!PyArg_ParseTuple(args, "s", &textureLocation)){
@@ -243,7 +243,7 @@ static PyObject* create_rect(PyObject* self, PyObject* args){
     return PyLong_FromLong(shader_index-1);
 }
 
-static PyObject* render_rect(PyObject* self, PyObject* args){
+static PyObject* renderRect(PyObject* self, PyObject* args){
     float x, y;
     float size;
     int index;
@@ -314,7 +314,7 @@ static PyObject* render_rect(PyObject* self, PyObject* args){
     return Py_None; 
 }
 
-static PyObject* key_is_pressed(PyObject* self, PyObject* args){
+static PyObject* keyIsPressed(PyObject* self, PyObject* args){
     int key;
 
     if (!PyArg_ParseTuple(args, "i", &key)) return NULL;
@@ -332,14 +332,14 @@ static PyObject* key_is_pressed(PyObject* self, PyObject* args){
 static PyMethodDef myMethods[] = {
     {"init", (PyCFunction)init, METH_VARARGS, "Inits"},
     {"version", (PyCFunction)version, METH_NOARGS, "Returns version"},
-    {"not_window_close", (PyCFunction)should_window_close, METH_NOARGS, "Close"},
-    {"clear", (PyCFunction)clear_screen, METH_VARARGS, "Clears Screen"},
-    {"render_rect", (PyCFunction)render_rect, METH_VARARGS, "Loads a new rect into memory"},
-    {"create_rect", (PyCFunction)create_rect, METH_VARARGS, "Loads a new rect into memory"},
-    {"get_fps", (PyCFunction)get_fps, METH_NOARGS, "Loads a new rect into memory"},
+    {"not_window_close", (PyCFunction)windowClose, METH_NOARGS, "Close"},
+    {"clear", (PyCFunction)clearScreen, METH_VARARGS, "Clears Screen"},
+    {"render_rect", (PyCFunction)renderRect, METH_VARARGS, "Loads a new rect into memory"},
+    {"create_rect", (PyCFunction)createRect, METH_VARARGS, "Loads a new rect into memory"},
+    {"get_fps", (PyCFunction)getFps, METH_NOARGS, "Loads a new rect into memory"},
     {"update", (PyCFunction)render, METH_NOARGS, "Render"},
-    {"set_title", (PyCFunction)set_title, METH_VARARGS, "Loads a new rect into memory"},
-    {"key_is_pressed", (PyCFunction)key_is_pressed, METH_VARARGS, "Checks key pressed"},
+    {"set_title", (PyCFunction)setTitle, METH_VARARGS, "Loads a new rect into memory"},
+    {"key_is_pressed", (PyCFunction)keyIsPressed, METH_VARARGS, "Checks key pressed"},
     //{"load_texture", (PyCFunction)load_texture, METH_VARARGS, "Checks key pressed"},
     {NULL, NULL, 0, NULL}
 };
