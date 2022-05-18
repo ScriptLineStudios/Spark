@@ -90,9 +90,7 @@ static PyObject* init(PyObject* self, PyObject* args){
     if (unlockFPS){
         glfwSwapInterval(0);
     }
-    else{
-        glfwSwapInterval(1);
-    } 
+    
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -157,14 +155,12 @@ static PyObject* clear_screen(PyObject* self, PyObject* args){
     Py_INCREF(Py_None);
     return Py_None;
 }
-GLuint textureToDraw;
+GLuint textures[256];
 
 static PyObject* create_rect(PyObject* self, PyObject* args){
-    float r;
-    float g;
-    float b;
+    const char * textureLocation = NULL;
 
-    if (!PyArg_ParseTuple(args, "fff", &r, &g, &b)){
+    if (!PyArg_ParseTuple(args, "s", &textureLocation)){
         return NULL;
     }
 
@@ -219,11 +215,11 @@ static PyObject* create_rect(PyObject* self, PyObject* args){
 
     int imgWidth, imgHeight, colorChannels;
     //stbi_set_flip_vertically_on_load(true);
-    unsigned char* bytes = stbi_load("examples/player_walk2.png", &imgWidth, &imgHeight, &colorChannels, 0);
+    unsigned char* bytes = stbi_load(textureLocation, &imgWidth, &imgHeight, &colorChannels, 0);
 
     GLuint texture;
     glGenTextures(1, &texture);
-    glActiveTexture(GL_TEXTURE0);
+    //glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -242,7 +238,7 @@ static PyObject* create_rect(PyObject* self, PyObject* args){
     glUseProgram(shaders[shader_index-1]);
     glUniform1i(tex0Uni, 0);
 
-    textureToDraw = texture;
+    textures[shader_index-1] = texture;
 
     return PyLong_FromLong(shader_index-1);
 }
@@ -307,9 +303,9 @@ static PyObject* render_rect(PyObject* self, PyObject* args){
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    
+
     glUseProgram(shaders[index]);
-    glBindTexture(GL_TEXTURE_2D, textureToDraw);
+    glBindTexture(GL_TEXTURE_2D, textures[index]);
 
     glBindVertexArray(VAO);  //Render Triangle
     glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
