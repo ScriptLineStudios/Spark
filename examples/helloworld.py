@@ -4,7 +4,6 @@ spark.init("Hello World Demo", 800, 800, False)
                                                
 texture2 = spark.create_rect("examples/grass.png")
 
-
 x = 0
 
 index = 0

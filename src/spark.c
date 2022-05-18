@@ -146,7 +146,6 @@ static PyObject* clearScreen(PyObject* self, PyObject* args){
     return Py_None;
 }
 
-
 static PyObject* createRect(PyObject* self, PyObject* args){
     const char * textureLocation = NULL;
 
