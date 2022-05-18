@@ -22,11 +22,6 @@ GLuint shaders[256];
 int shader_index = 0;
 
 GLuint textures[256];
-int textureIndex = 0;
-
-GLuint textureShaders[256];
-
-GLuint textureShader;
 
 int windowX;
 int windowY;
@@ -86,22 +81,19 @@ static PyObject* init(PyObject* self, PyObject* args){
     windowX = x;
     windowY = y;
 
-
     if (unlockFPS){
         glfwSwapInterval(0);
-    }
-    
+    }    
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static PyObject* windowClose(PyObject* self){
-    if (!glfwWindowShouldClose(window)){
+    if (!glfwWindowShouldClose(window))
         Py_RETURN_TRUE;
-    }else{
+    else
         Py_RETURN_FALSE;
-    }
 }
 
 static PyObject* getFps(PyObject* self){
@@ -111,9 +103,8 @@ static PyObject* getFps(PyObject* self){
 static PyObject* setTitle(PyObject* self, PyObject* args){
     const char * title;
 
-    if (!PyArg_ParseTuple(args, "s", &title)){
+    if (!PyArg_ParseTuple(args, "s", &title))
         return NULL;
-    }
 
     glfwSetWindowTitle(window, title);
     
@@ -133,8 +124,7 @@ static PyObject* render(PyObject* self){
         prevTime = crntTime;
         counter = 0;
     }
-
-
+    
     glfwSwapBuffers(window); //Update 
     glfwPollEvents();
     
@@ -155,7 +145,7 @@ static PyObject* clearScreen(PyObject* self, PyObject* args){
     Py_INCREF(Py_None);
     return Py_None;
 }
-GLuint textures[256];
+
 
 static PyObject* createRect(PyObject* self, PyObject* args){
     const char * textureLocation = NULL;
@@ -214,7 +204,6 @@ static PyObject* createRect(PyObject* self, PyObject* args){
     glDeleteShader(fragmentShader);
 
     int imgWidth, imgHeight, colorChannels;
-    //stbi_set_flip_vertically_on_load(true);
     unsigned char* bytes = stbi_load(textureLocation, &imgWidth, &imgHeight, &colorChannels, 0);
 
     GLuint texture;
@@ -251,9 +240,8 @@ static PyObject* renderRect(PyObject* self, PyObject* args){
     int g;
     int b;
 
-    if (!PyArg_ParseTuple(args, "i(ff)(iii)f", &index, &x, &y, &r,&g,&b, &size)){
+    if (!PyArg_ParseTuple(args, "i(ff)(iii)f", &index, &x, &y, &r,&g,&b, &size))
         return NULL;
-    }
 
     float colorR = r/255;
     float colorG = g/255;
