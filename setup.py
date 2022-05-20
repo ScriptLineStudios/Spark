@@ -1,6 +1,6 @@
 from distutils.core import setup, Extension
 
-base = Extension("spark", sources = ["src/spark.c", "/usr/include/glad/glad.c", "/usr/include/stb/stb.c"], 
+base = Extension("spark", sources = ["src/spark.c", "src/shaders.cpp", "/usr/include/glad/glad.c", "/usr/include/stb/stb.c"], 
     extra_link_args = ["-Wall", "-lGL", "-lGLU", "-lglut", "-lglfw", "-lX11", "-lXxf86vm", "-lXrandr", "-lpthread",
      "-lXi", "-ldl", "-lXinerama", "-lXcursor"])
      
