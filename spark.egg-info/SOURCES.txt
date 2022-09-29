@@ -1,0 +1,9 @@
+README.md
+setup.py
+/usr/include/glad/glad.c
+/usr/include/stb/stb.c
+spark.egg-info/PKG-INFO
+spark.egg-info/SOURCES.txt
+spark.egg-info/dependency_links.txt
+spark.egg-info/top_level.txt
+src/spark.c

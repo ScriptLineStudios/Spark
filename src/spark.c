@@ -4,16 +4,12 @@
 #include <GLFW/glfw3.h>
 #include <stb/stb.h>
 #include <stdbool.h>
-#include<iostream>
-
-#include "../include/shaders.h"
 
 GLFWwindow* window;
 
 static PyObject* version(PyObject* self){
     return Py_BuildValue("s", "Version 1.0");
 }
-
 double prevTime = 0.0;
 double crntTime = 0.0;
 double timeDiff;
@@ -27,16 +23,10 @@ int shader_index = 0;
 
 GLuint textures[256];
 
-const char* shaderSourceFiles[256];
-int shaderSourceFileIndex =  0;
-
 int windowX;
 int windowY;
 
 int keys[256];
-
-std::string fS = "";
-std::string vS = "";
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -50,6 +40,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         }
     }
 }
+
 
 static PyObject* init(PyObject* self, PyObject* args){
     const char *title;
@@ -121,6 +112,7 @@ static PyObject* setTitle(PyObject* self, PyObject* args){
     return Py_None;
 }
 
+
 static PyObject* render(PyObject* self){
     crntTime = glfwGetTime();
     timeDiff = crntTime - prevTime;
@@ -154,60 +146,50 @@ static PyObject* clearScreen(PyObject* self, PyObject* args){
     return Py_None;
 }
 
-static PyObject* loadShader(PyObject* self, PyObject* args){
-	const char * shaderLocation = NULL;
-			  
-	if (!PyArg_ParseTuple(args, "s", &shaderLocation))
-		return NULL;
-
-	std::string shader = get_file_contents(shaderLocation);
-	//const char * shader = shaderData.c_str();
-
-	//std::cout << shader << std::endl;
-
-	if (vS == "")
-	{
-		vS = shader;
-	}
-	else if (fS == "" && vS != "")
-	{
-		fS = shader;
-	}
-		
-	//shaderSourceFiles[shaderSourceFileIndex] = shader;
-	//shaderSourceFileIndex += 1;
-
-	Py_INCREF(PyLong_FromLong(shaderSourceFileIndex-1));
-	return PyLong_FromLong(shaderSourceFileIndex-1);
-}
 
 static PyObject* createRect(PyObject* self, PyObject* args){
     const char * textureLocation = NULL;
 
-    //const char * vertexShaderArg = NULL;
-    //const char * fragmentShaderArg  = NULL;
-	int vertexShaderIndex;
-	int fragmentShaderIndex;
-
-    if (!PyArg_ParseTuple(args, "sii", &textureLocation, &vertexShaderIndex, &fragmentShaderIndex))
+    if (!PyArg_ParseTuple(args, "s", &textureLocation)){
         return NULL;
-    
-    //const char* vertexShaderSource = ;
-    //const char* fragmentShaderSource = ; 
-	//printf("%s", shaderSourceFiles[vertexShaderIndex]);
+    }
 
-    const char * v = vS.c_str();
-    const char * f = fS.c_str();  
+    const char* vertexShaderSource = GLSL(
+            layout (location = 0) in vec3 aPos; 
+            layout (location = 1) in vec3 aColor;
+            layout (location = 2) in vec2 aTex;
 
-    puts(v);
-    puts(f);
-	
+            out vec3 outColor;
+
+            out vec2 texCoord;
+
+            void main()
+            {
+                gl_Position = vec4(aPos, 1.0);
+                outColor = aColor;
+                texCoord = aTex;
+            }
+        );
+    const char* fragmentShaderSource = GLSL(
+            out vec4 FragColor;
+            in vec3 outColor;
+
+            in vec2 texCoord;
+
+            uniform sampler2D tex0;
+            
+            void main() 
+            {
+                FragColor = texture(tex0, texCoord);
+            }
+        );
+
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &v, NULL);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
-    
+
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &f, NULL);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
 
     GLuint shaderProgram = glCreateProgram();
@@ -347,7 +329,6 @@ static PyMethodDef myMethods[] = {
     {"set_title", (PyCFunction)setTitle, METH_VARARGS, "Loads a new rect into memory"},
     {"key_is_pressed", (PyCFunction)keyIsPressed, METH_VARARGS, "Checks key pressed"},
     //{"load_texture", (PyCFunction)load_texture, METH_VARARGS, "Checks key pressed"},
-	{"load_shader", (PyCFunction)loadShader, METH_VARARGS, "Loads a shader into memory"},
     {NULL, NULL, 0, NULL}
 };
 
