@@ -4,3 +4,6 @@
 [submodule "include/glfw"]
 	path = include/glfw
 	url = https://github.com/glfw/glfw
+[submodule "Include/glfw"]
+	path = Include/glfw
+	url = https://github.com/glfw/glfw.git
