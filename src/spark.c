@@ -1,9 +1,10 @@
 #include <Python.h>
 #include <stdio.h>
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <stb/stb.h>
 #include <stdbool.h>
+
+#include "../include/glfw/v3.3/glfw/glfw/include/GLFW/glfw3.h"
 
 GLFWwindow* window;
 
@@ -155,34 +156,34 @@ static PyObject* createRect(PyObject* self, PyObject* args){
     }
 
     const char* vertexShaderSource = GLSL(
-            layout (location = 0) in vec3 aPos; 
-            layout (location = 1) in vec3 aColor;
-            layout (location = 2) in vec2 aTex;
+        layout (location = 0) in vec3 aPos; 
+        layout (location = 1) in vec3 aColor;
+        layout (location = 2) in vec2 aTex;
 
-            out vec3 outColor;
+        out vec3 outColor;
 
-            out vec2 texCoord;
+        out vec2 texCoord;
 
-            void main()
-            {
-                gl_Position = vec4(aPos, 1.0);
-                outColor = aColor;
-                texCoord = aTex;
-            }
-        );
+        void main()
+        {
+            gl_Position = vec4(aPos, 1.0);
+            outColor = aColor;
+            texCoord = aTex;
+        }
+    );
     const char* fragmentShaderSource = GLSL(
-            out vec4 FragColor;
-            in vec3 outColor;
+        out vec4 FragColor;
+        in vec3 outColor;
 
-            in vec2 texCoord;
+        in vec2 texCoord;
 
-            uniform sampler2D tex0;
-            
-            void main() 
-            {
-                FragColor = texture(tex0, texCoord);
-            }
-        );
+        uniform sampler2D tex0;
+        
+        void main() 
+        {
+            FragColor = texture(tex0, texCoord);
+        }
+    );
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);

@@ -3,4 +3,4 @@
 	url = https://github.com/go-gl/glfw
 [submodule "include/glfw"]
 	path = include/glfw
-	url = https://github.com/go-gl/glfw
+	url = https://github.com/glfw/glfw
