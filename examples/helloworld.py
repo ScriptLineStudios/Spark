@@ -13,9 +13,9 @@ while spark.not_window_close():
     spark.clear((0, 0, 0))
     spark.set_title(str(spark.get_fps()))
 
-    if spark.key_is_pressed(65):
+    if spark.key.key_is_pressed(65):
         x -= 0.05
-    if spark.key_is_pressed(68):
+    if spark.key.key_is_pressed(68):
         x += 0.05
 
     spark.render_rect(texture1, (0.4, 0), (255, 0, 0), 200)

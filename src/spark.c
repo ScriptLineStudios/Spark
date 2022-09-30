@@ -8,6 +8,8 @@
 #include "../Include/stb/stb_image.h"
 #include "../Include/glfw/deps/glad/gles2.h"
 
+#include "key.c"
+
 GLFWwindow* window;
 
 static PyObject* version(PyObject* self){
@@ -29,20 +31,6 @@ GLuint textures[256];
 int windowX;
 int windowY;
 
-int keys[256];
-
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    for (int i = 0; i < 256; i++){
-        if (key == i && action == GLFW_PRESS)
-        {
-            keys[i] = 1;
-        }
-        else if (key == i && action == GLFW_RELEASE){
-            keys[i] = 0;
-        }
-    }
-}
 
 
 static PyObject* init(PyObject* self, PyObject* args){
@@ -310,22 +298,7 @@ static PyObject* renderRect(PyObject* self, PyObject* args){
     return Py_None; 
 }
 
-static PyObject* keyIsPressed(PyObject* self, PyObject* args){
-    int key;
-
-    if (!PyArg_ParseTuple(args, "i", &key)) return NULL;
-
-    if (keys[key] == 1){
-        Py_INCREF(Py_True);
-        return Py_True;
-    }
-    else{
-        Py_INCREF(Py_False);
-        return Py_False;
-    }
-}
-
-static PyMethodDef myMethods[] = {
+static PyMethodDef base_methods[] = {
     {"init", (PyCFunction)init, METH_VARARGS, "Inits"},
     {"version", (PyCFunction)version, METH_NOARGS, "Returns version"},
     {"not_window_close", (PyCFunction)windowClose, METH_NOARGS, "Close"},
@@ -335,19 +308,38 @@ static PyMethodDef myMethods[] = {
     {"get_fps", (PyCFunction)getFps, METH_NOARGS, "Loads a new rect into memory"},
     {"update", (PyCFunction)render, METH_NOARGS, "Render"},
     {"set_title", (PyCFunction)setTitle, METH_VARARGS, "Loads a new rect into memory"},
-    {"key_is_pressed", (PyCFunction)keyIsPressed, METH_VARARGS, "Checks key pressed"},
-    //{"load_texture", (PyCFunction)load_texture, METH_VARARGS, "Checks key pressed"},
     {NULL, NULL, 0, NULL}
 };
+
+static PyMethodDef key_methods[] = {
+    {"key_is_pressed", (PyCFunction)keyIsPressed, METH_VARARGS, "Checks key pressed"},
+};
+
 
 static struct PyModuleDef spark = {
     PyModuleDef_HEAD_INIT,
     "Spark",
     "Base",
     -1,
-    myMethods
+    base_methods
 };
 
+static struct PyModuleDef key = {
+    PyModuleDef_HEAD_INIT,
+    "key",
+    "key handling",
+    -1,
+    key_methods
+};
+
+PyMODINIT_FUNC PyInit_key(void) {
+    return PyModule_Create(&key);
+}
+
 PyMODINIT_FUNC PyInit_spark(void){
-    return PyModule_Create(&spark);
+    PyObject *base = PyModule_Create(&spark);
+    PyObject *key =  PyInit_key();
+    Py_INCREF(key);
+    PyModule_AddObject(base, "key", key);
+    return base;
 }
