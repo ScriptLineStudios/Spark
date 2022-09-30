@@ -22,8 +22,7 @@ base = Extension(
 )
 
 def format():
-    os.system("clang-format -i src/*")
-    os.system("black .")
+    pass
 
 def build():
     setup(
