@@ -1,10 +1,12 @@
+
 #include <Python.h>
 #include <stdio.h>
+#include <stb/stb.h>
 #include <stdbool.h>
 
-#include "../Include/glfw/deps/glad/gles2.h"
 #include "../Include/glfw/include/GLFW/glfw3.h"
 #include "../Include/stb/stb_image.h"
+#include "../Include/glfw/deps/glad/gles2.h"
 
 GLFWwindow* window;
 
@@ -206,6 +208,11 @@ static PyObject* createRect(PyObject* self, PyObject* args){
 
     int imgWidth, imgHeight, colorChannels;
     unsigned char* bytes = stbi_load(textureLocation, &imgWidth, &imgHeight, &colorChannels, 0);
+
+    if (!bytes) {
+        PyErr_SetString(PyExc_FileNotFoundError, "The texture was not found");
+        return NULL;
+    }
 
     GLuint texture;
     glGenTextures(1, &texture);
