@@ -8,13 +8,13 @@ img_path = "test-assets/player_walk2.png"
 
 class TestTexture(unittest.TestCase):
     def test_texture_creation(self):
-        tex0 = spark.create_rect(img_path)
+        tex0 = spark.create_image(img_path)
         self.assertEqual(tex0, 0)
 
-        tex1 = spark.create_rect(img_path)
+        tex1 = spark.create_image(img_path)
         self.assertEqual(tex1, 1)
 
-        tex2 = spark.create_rect(img_path)
+        tex2 = spark.create_image(img_path)
         self.assertEqual(tex2, 2)
 
     def test_texture_file_error(self):
@@ -27,7 +27,7 @@ class TestTexture(unittest.TestCase):
         ]
 
         for path in invalid_paths:
-            self.assertRaises(FileNotFoundError, spark.create_rect, path)
+            self.assertRaises(FileNotFoundError, spark.create_image, path)
 
 
 if __name__ == "__main__":
