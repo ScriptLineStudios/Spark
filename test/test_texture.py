@@ -5,7 +5,6 @@ spark.init("Texture Test", 1, 1, False)
 
 img_path = "test-assets/player_walk2.png"
 
-
 class TestTexture(unittest.TestCase):
     def test_texture_creation(self):
         tex0 = spark.create_image(img_path)
