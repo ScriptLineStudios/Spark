@@ -1,7 +1,8 @@
 import unittest
 import spark
 
-spark.init("Key Test", 1, 1, False) 
+spark.init("Key Test", 1, 1, False)
+
 
 class TestTexure(unittest.TestCase):
     def test_key_pressed(self):
@@ -14,5 +15,5 @@ class TestTexure(unittest.TestCase):
         self.assertFalse(spark.key_is_pressed(71))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

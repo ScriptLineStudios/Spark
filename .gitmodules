@@ -7,3 +7,6 @@
 [submodule "Include/glfw"]
 	path = Include/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "Include/stb"]
+	path = Include/stb
+	url = https://github.com/nothings/stb.git

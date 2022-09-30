@@ -1,10 +1,11 @@
 import pygame
+
 pygame.init()
 
 display = pygame.display.set_mode((800, 800))
 clock = pygame.time.Clock()
 
-img = pygame.image.load("player_walk2.png")
+img = pygame.image.load("shaders/player_walk2.png")
 
 while True:
     display.fill((0, 0, 0))
@@ -13,7 +14,7 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             break
-    
+
     for i in range(1000):
         display.blit(pygame.transform.scale(img, (100, 100)), (300, 300))
 

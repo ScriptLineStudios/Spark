@@ -6,4 +6,8 @@ spark.egg-info/PKG-INFO
 spark.egg-info/SOURCES.txt
 spark.egg-info/dependency_links.txt
 spark.egg-info/top_level.txt
+src/glad.c
 src/spark.c
+src/stb.c
+test/test_keys.py
+test/test_texture.py
