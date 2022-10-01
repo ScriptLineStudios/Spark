@@ -24,7 +24,67 @@ int FPS;
 GLuint shaders[256];
 int shader_index = 0;
 
+/*
+Shader layout
+-------------
+
+0 = texture shader (default)
+
+*/
+
+void setupDefaultShaders() {
+    const char* vertexShaderSource = GLSL(
+        layout (location = 0) in vec3 aPos; 
+        layout (location = 1) in vec3 aColor;
+        layout (location = 2) in vec2 aTex;
+
+        out vec3 outColor;
+
+        out vec2 texCoord;
+
+        void main()
+        {
+            gl_Position = vec4(aPos, 1.0);
+            outColor = aColor;
+            texCoord = aTex;
+        }
+    );
+    const char* fragmentShaderSource = GLSL(
+        out vec4 FragColor;
+        in vec3 outColor;
+
+        in vec2 texCoord;
+
+        uniform sampler2D tex0;
+        
+        void main() 
+        {
+            FragColor = texture(tex0, texCoord);
+        }
+    );
+
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    shaders[shader_index] = shaderProgram;
+    shader_index += 1;
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+}
+
 GLuint textures[256];
+int texture_index = 0;
 
 int windowX;
 int windowY;
@@ -71,6 +131,7 @@ static PyObject* init(PyObject* self, PyObject* args){
     if (unlockFPS){
         glfwSwapInterval(0);
     }    
+    setupDefaultShaders();
 
     Py_INCREF(Py_None);
     return Py_None;

@@ -68,6 +68,7 @@ static PyObject* renderRect(PyObject* self, PyObject* args, PyObject* kwargs){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glUseProgram(shaders[index]);
+    glBindTexture(GL_TEXTURE_2D, textures[index - 1]);
 
     glBindVertexArray(VAO);  //Render Triangle
     glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);

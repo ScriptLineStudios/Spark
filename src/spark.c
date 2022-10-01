@@ -10,6 +10,7 @@
 #include "key.c"
 #include "base.c"
 #include "shapes.c"
+#include "shaders.c"
 
 static PyObject* createTexture(PyObject* self, PyObject* args){
     const char * textureLocation = NULL;
@@ -17,55 +18,7 @@ static PyObject* createTexture(PyObject* self, PyObject* args){
     if (!PyArg_ParseTuple(args, "s", &textureLocation)){
         return NULL;
     }
-
-    const char* vertexShaderSource = GLSL(
-        layout (location = 0) in vec3 aPos; 
-        layout (location = 1) in vec3 aColor;
-        layout (location = 2) in vec2 aTex;
-
-        out vec3 outColor;
-
-        out vec2 texCoord;
-
-        void main()
-        {
-            gl_Position = vec4(aPos, 1.0);
-            outColor = aColor;
-            texCoord = aTex;
-        }
-    );
-    const char* fragmentShaderSource = GLSL(
-        out vec4 FragColor;
-        in vec3 outColor;
-
-        in vec2 texCoord;
-
-        uniform sampler2D tex0;
-        
-        void main() 
-        {
-            FragColor = texture(tex0, texCoord);
-        }
-    );
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    shaders[shader_index] = shaderProgram;
-    shader_index += 1;
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    texture_index += 1;
 
     int imgWidth, imgHeight, colorChannels;
     unsigned char* bytes = stbi_load(textureLocation, &imgWidth, &imgHeight, &colorChannels, 0);
@@ -93,62 +46,16 @@ static PyObject* createTexture(PyObject* self, PyObject* args){
     glBindTexture(GL_TEXTURE_2D, 0);
     
     GLuint tex0Uni = glGetUniformLocation(shaders[shader_index-1], "tex0");
-    glUseProgram(shaders[shader_index-1]);
+    glUseProgram(shaders[0]);
+    
+    
     glUniform1i(tex0Uni, 0);
 
-    textures[shader_index-1] = texture;
+    textures[texture_index - 1] = texture;
 
-    return PyLong_FromLong(shader_index-1);
+    return PyLong_FromLong(texture_index - 1);
+
 }
-
-static PyObject* sendShader(PyObject* self, PyObject* args){
-    int index;
-    const char *name;
-    float value;
-
-    if (!PyArg_ParseTuple(args, "isf", &index, &name, &value)) {
-        return NULL;
-    }
-
-    GLuint loc = glGetUniformLocation(shaders[index], (const GLchar*)name);
-    glUseProgram(shaders[index]);
-    glUniform1f(loc, value);
-
-    Py_INCREF(Py_None);                       
-    return Py_None; 
-}
-
-static PyObject* loadShader(PyObject* self, PyObject* args){
-    const char *vertexShaderSource;
-    const char *fragmentShaderSource;
-
-    if (!PyArg_ParseTuple(args, "ss", &vertexShaderSource, &fragmentShaderSource)) {
-        return NULL;
-    }
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    shaders[shader_index] = shaderProgram;
-    shader_index += 1;
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return PyLong_FromLong(shader_index-1);
-}
-
-
 
 static PyObject* renderTexture(PyObject* self, PyObject* args){
     float x, y;
@@ -190,6 +97,8 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
 
 	glBindVertexArray(VAO);
 
+
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
 
@@ -210,7 +119,7 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    glUseProgram(shaders[index]);
+    glUseProgram(shaders[0]);
     glBindTexture(GL_TEXTURE_2D, textures[index]);
 
     glBindVertexArray(VAO);  //Render Triangle
@@ -231,8 +140,11 @@ static PyMethodDef base_methods[] = {
     {"update", (PyCFunction)render, METH_NOARGS, "Render"},
     {"set_title", (PyCFunction)setTitle, METH_VARARGS, "Loads a new rect into memory"},
     {"load_shader", (PyCFunction)loadShader, METH_VARARGS, "Loads a new rect into memory"},
-    {"send_shader", (PyCFunction)sendShader, METH_VARARGS, "Loads a new rect into memory"},
+    {"send_float", (PyCFunction)sendFloat, METH_VARARGS, "Loads a new rect into memory"},
+    {"send_image", (PyCFunction)sendTexture, METH_VARARGS, "Loads a new rect into memory"},
     {NULL, NULL, 0, NULL}
+
+
 };
 
 static PyMethodDef shape_methods[] = {
