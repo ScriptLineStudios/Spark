@@ -14,6 +14,13 @@ while spark.not_window_close():
     spark.update()       
 ```
 
+# Features
+
+- Creating a window
+- Loading and rendering images
+- Rendering rectanges (more shapes to come)
+- Apply optional shaders to rectanges
+
 # Installation
 
 ```pip install git+https://github.com/ScriptLineStudios/Spark/```
