@@ -10,13 +10,14 @@
 static PyObject* renderRect(PyObject* self, PyObject* args, PyObject* kwargs){
     float x, y;
     float size;
-    int index;
+    int index = 1;
     float r;
     float g;
     float b;
 
-    if (!PyArg_ParseTuple(args, "i(ff)(fff)f", &index, &x, &y, &r,&g,&b, &size))
+    if (!PyArg_ParseTuple(args, "(ff)(fff)f|i", &x, &y, &r,&g,&b, &size, &index)) {
         return NULL;
+    }
 
     float colorR = r;
     float colorG = g;
@@ -68,7 +69,7 @@ static PyObject* renderRect(PyObject* self, PyObject* args, PyObject* kwargs){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glUseProgram(shaders[index]);
-    glBindTexture(GL_TEXTURE_2D, textures[index - 1]);
+    glBindTexture(GL_TEXTURE_2D, textures[index - 2]);
 
     glBindVertexArray(VAO);  //Render Triangle
     glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);

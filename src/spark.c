@@ -45,15 +45,17 @@ static PyObject* createTexture(PyObject* self, PyObject* args){
     stbi_image_free(bytes);
     glBindTexture(GL_TEXTURE_2D, 0);
     
+
     GLuint tex0Uni = glGetUniformLocation(shaders[shader_index-1], "tex0");
     glUseProgram(shaders[0]);
+
     
     
     glUniform1i(tex0Uni, 0);
 
-    textures[texture_index - 1] = texture;
+    textures[texture_index - 2] = texture;
 
-    return PyLong_FromLong(texture_index - 1);
+    return PyLong_FromLong(texture_index - 2);
 
 }
 

@@ -24,7 +24,7 @@ while spark.not_window_close():
     spark.send_float(shader, "tx", time)
     spark.send_float(shader, "ty", time)
 
-    spark.shapes.render_rect(shader, (0, 0), (1, 0.5, 1), 400)
+    spark.shapes.render_rect((0, 0), (1, 0, 0), 400)
 
     spark.set_title(str(spark.get_fps()))
     spark.update()

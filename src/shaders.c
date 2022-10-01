@@ -35,7 +35,7 @@ static PyObject* sendTexture(PyObject* self, PyObject* args){
     
     GLuint loc = glGetUniformLocation(shaders[index], (const GLchar*)name);
     glUseProgram(shaders[index]);
-    glUniform1i(loc, textures[texture_index - 1]);
+    glUniform1i(loc, textures[texture_index - 2]);
 
     Py_INCREF(Py_None);                       
     return Py_None; 
