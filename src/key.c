@@ -8,6 +8,7 @@
 #include "../Include/glfw/deps/glad/gles2.h"
 
 int keys[256];
+int mouse_clicks[2];
 
 #define A 65
 #define B 66
@@ -39,16 +40,26 @@ int keys[256];
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    for (int i = 0; i < 256; i++){
-        if (key == i && action == GLFW_PRESS)
-        {
-            keys[i] = 1;
-        }
-        else if (key == i && action == GLFW_RELEASE){
-            keys[i] = 0;
-        }
+    //for (int i = 0; i < 256; i++){
+    if (action == GLFW_PRESS)
+    {
+        keys[key] = 1;
+    }
+    else if (action == GLFW_RELEASE){
+        keys[key] = 0;
     }
 }
+
+void mouseCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    /*if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) 
+    {
+       double xpos, ypos;
+       glfwGetCursorPos(window, &xpos, &ypos);
+       printf("%f %f\n", xpos / windowX, ypos / windowY);
+    }*/
+}
+
 
 static PyObject* keyIsPressed(PyObject* self, PyObject* args){
     int key;

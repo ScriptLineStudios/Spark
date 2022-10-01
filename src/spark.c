@@ -12,6 +12,15 @@
 #include "shapes.c"
 #include "shaders.c"
 
+static PyObject *mouseGetPos(PyObject *self) {
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    PyObject * res = PyTuple_New(2);
+    PyTuple_SetItem(res, 0, PyFloat_FromDouble(((xpos - windowX / 2) / windowX)*2));
+    PyTuple_SetItem(res, 1, PyFloat_FromDouble((-((ypos - windowY / 2) / windowY)*2)));
+    return res;
+}
+
 static PyObject* createTexture(PyObject* self, PyObject* args){
     const char * textureLocation = NULL;
 
@@ -145,6 +154,7 @@ static PyMethodDef base_methods[] = {
     {"load_shader", (PyCFunction)loadShader, METH_VARARGS, "Loads a new rect into memory"},
     {"send_float", (PyCFunction)sendFloat, METH_VARARGS, "Loads a new rect into memory"},
     {"send_image", (PyCFunction)sendTexture, METH_VARARGS, "Loads a new rect into memory"},
+    {"mouse_pos", (PyCFunction)mouseGetPos, METH_NOARGS, "Loads a new rect into memory"},
     {NULL, NULL, 0, NULL}
 
 

@@ -151,6 +151,8 @@ static PyObject* init(PyObject* self, PyObject* args){
 	}
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, keyCallback);
+    glfwSetMouseButtonCallback(window, mouseCallback);
+
     gladLoadGL();
     glViewport(0, 0, x, y);
     glMatrixMode(GL_PROJECTION);
