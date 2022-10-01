@@ -19,7 +19,7 @@ while spark.not_window_close():
 
     spark.shapes.render_rect(rect1[0], rect1[1], rect1[2])
     spark.shapes.render_rect(rect2[0], rect2[1], rect2[2])
-    print(spark.mouse_pos())
+
     #print(spark.shapes.collide_rect(rect1, rect2))
     spark.set_title(str(spark.get_fps()))
     spark.update()

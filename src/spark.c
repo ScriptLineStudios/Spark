@@ -168,6 +168,7 @@ static PyMethodDef shape_methods[] = {
 
 static PyMethodDef key_methods[] = {
     {"key_is_pressed", (PyCFunction)keyIsPressed, METH_VARARGS, "Checks key pressed"},
+    {"mouse_is_pressed", (PyCFunction)mouseIsClicked, METH_VARARGS, "Checks if mouse pressed"},
 };
 
 
@@ -230,6 +231,9 @@ PyMODINIT_FUNC PyInit_key(void) {
     PyModule_AddIntMacro(mod, Y);
     PyModule_AddIntMacro(mod, Z);
     PyModule_AddIntMacro(mod, SPACE);
+
+    PyModule_AddIntMacro(mod, MOUSE_LEFT);
+    PyModule_AddIntMacro(mod, MOUSE_RIGHT);
 
     return mod;
 }

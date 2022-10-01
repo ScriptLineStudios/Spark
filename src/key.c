@@ -38,6 +38,9 @@ int mouse_clicks[2];
 #define Z 90
 #define SPACE 32
 
+#define MOUSE_LEFT 0
+#define MOUSE_RIGHT 1
+
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     //for (int i = 0; i < 256; i++){
@@ -52,12 +55,20 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
 void mouseCallback(GLFWwindow* window, int button, int action, int mods)
 {
-    /*if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) 
-    {
-       double xpos, ypos;
-       glfwGetCursorPos(window, &xpos, &ypos);
-       printf("%f %f\n", xpos / windowX, ypos / windowY);
-    }*/
+    mouse_clicks[button] = action;
+}
+
+static PyObject* mouseIsClicked(PyObject* self, PyObject* args) {
+    int key;
+    if (!PyArg_ParseTuple(args, "i", &key)) return NULL;
+    if (mouse_clicks[key] == 1){
+        Py_INCREF(Py_True);
+        return Py_True;
+    }
+    else{
+        Py_INCREF(Py_False);
+        return Py_False;
+    }
 }
 
 
