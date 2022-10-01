@@ -131,6 +131,7 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
     return Py_None; 
 }
 
+
 static PyMethodDef base_methods[] = {
     {"init", (PyCFunction)init, METH_VARARGS, "Inits"},
     {"version", (PyCFunction)version, METH_NOARGS, "Returns version"},
@@ -151,7 +152,9 @@ static PyMethodDef base_methods[] = {
 
 static PyMethodDef shape_methods[] = {
     {"render_rect", (PyCFunction)renderRect, METH_VARARGS, "Loads a new rect into memory"},
+    {"collide_rect", (PyCFunction)collideRect, METH_VARARGS, "Loads a new rect into memory"},
 };
+
 
 static PyMethodDef key_methods[] = {
     {"key_is_pressed", (PyCFunction)keyIsPressed, METH_VARARGS, "Checks key pressed"},

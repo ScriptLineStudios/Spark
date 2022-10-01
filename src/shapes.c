@@ -7,15 +7,55 @@
 #include "../Include/stb/stb_image.h"
 #include "../Include/glfw/deps/glad/gles2.h"
 
-static PyObject* renderRect(PyObject* self, PyObject* args, PyObject* kwargs){
+static PyObject *collideRect(PyObject *self, PyObject*args) {
+    float _rect1_x, _rect1_y, _rect1_color_r, _rect1_color_g, _rect1_color_b, _rect1_w, _rect1_h;
+    float _rect2_x, _rect2_y, _rect2_color_r, _rect2_color_g, _rect2_color_b, _rect2_w, _rect2_h;
+
+
+    if (!PyArg_ParseTuple(args, "((ff)(fff)(ff))((ff)(fff)(ff))", &_rect1_x, &_rect1_y, &_rect1_color_r, &_rect1_color_g, 
+                    &_rect1_color_b, &_rect1_w, &_rect1_h, 
+                    &_rect2_x, &_rect2_y, &_rect2_color_r, &_rect2_color_g, &_rect2_color_b, &_rect2_w, &_rect2_h)) 
+    {
+        return NULL;
+    }
+
+    float rect1_x = _rect1_x;
+    float rect1_y = _rect1_y;
+    float rect1_w = _rect1_w;
+    float rect1_h = _rect1_h;
+
+    float rect2_x = _rect2_x;
+    float rect2_y = _rect2_y;
+    float rect2_w = _rect2_w;
+    float rect2_h = _rect2_h;
+
+    float __x = windowX / 2;
+    float __y = windowY / 2;
+
+    if (rect1_x * __x < rect2_x * __x + rect2_w &&
+        rect1_x * __x + rect1_w > rect2_x * __x &&
+        rect1_y * __y < rect2_y * __y + rect2_h &&
+        rect1_h + rect1_y * __y > rect2_y * __y)
+    {
+        Py_INCREF(Py_True);
+        return Py_True;
+    }    
+    else{
+        Py_INCREF(Py_False);
+        return Py_False;
+    }
+}
+
+static PyObject *renderRect(PyObject* self, PyObject* args, PyObject* kwargs){
     float x, y;
-    float size;
+    float size_x;
+    float size_y;
     int index = 1;
     float r;
     float g;
     float b;
 
-    if (!PyArg_ParseTuple(args, "(ff)(fff)f|i", &x, &y, &r,&g,&b, &size, &index)) {
+    if (!PyArg_ParseTuple(args, "(ff)(fff)(ff)|i", &x, &y, &r,&g,&b, &size_x, &size_y, &index)) {
         return NULL;
     }
 
@@ -26,12 +66,20 @@ static PyObject* renderRect(PyObject* self, PyObject* args, PyObject* kwargs){
     float renderX = x;
     float renderY = y;
 
+    float _y = (size_y/windowY) * 2;
+    float _x = (size_x/windowX) * 2;
+
+    float __y = (size_y/windowY);
+    float __x = (size_y/windowY);
+
+
+
     GLfloat verticies[] =
     {
-        renderX,      renderY+(size/windowY),           0.0f,   colorR, colorG, colorB, 0.0f, 0.0f, 
-        renderX,      renderY,                          0.0f,   colorR, colorG, colorB, 0.0f, 1.0f,
-        renderX+(size/windowX), renderY,                0.0f,   colorR, colorG, colorB, 1.0f, 1.0f,
-        renderX+(size/windowX), renderY+(size/windowY), 0.0f,   colorR, colorG, colorB, 1.0f, 0.0f
+        (renderX- _x / 2) + __x,      (renderY+_y - _y / 2) - __y,           0.0f,   colorR, colorG, colorB, 0.0f, 0.0f, 
+        (renderX- _x / 2)+ __x,      (renderY- _y / 2)- __y,                          0.0f,   colorR, colorG, colorB, 0.0f, 1.0f,
+        (renderX+_x- _x / 2)+ __x, (renderY- _y / 2)- __y,                0.0f,   colorR, colorG, colorB, 1.0f, 1.0f,
+        (renderX+_x- _x / 2)+ __x, (renderY+_y- _y / 2)- __y, 0.0f,   colorR, colorG, colorB, 1.0f, 0.0f
     };
 
     GLuint indicies[] =
