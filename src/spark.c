@@ -78,21 +78,21 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
     if (!PyArg_ParseTuple(args, "i(ff)(ff)", &index, &x, &y, &size_x, &size_y))
         return NULL;
 
-    float renderX = x;
-    float renderY = y;
+    float renderX = x / (windowX / 2);
+    float renderY = y / (windowY / 2);
 
     float _y = (size_y/windowY) * 2;
     float _x = (size_x/windowX) * 2;
 
     float __y = (size_y/windowY);
-    float __x = (size_y/windowY);
+    float __x = (size_x/windowX);
 
-    GLfloat verticies[] =
+    GLfloat verticies[] = 
     {
-        (renderX- _x / 2) + __x,      (renderY+_y - _y / 2) - __y,           0.0f,   0, 0, 0, 0.0f, 0.0f, 
-        (renderX- _x / 2)+ __x,      (renderY- _y / 2)- __y,                          0.0f,   0, 0, 0, 0.0f, 1.0f,
-        (renderX+_x- _x / 2)+ __x, (renderY- _y / 2)- __y,                0.0f,   0, 0, 0, 1.0f, 1.0f,
-        (renderX+_x- _x / 2)+ __x, (renderY+_y- _y / 2)- __y, 0.0f,   0, 0, 0, 1.0f, 0.0f
+        (renderX - _x / 2)      + __x, (renderY + _y -  _y / 2) + __y,  0.0f,   0, 0, 0, 0.0f, 0.0f, 
+        (renderX - _x / 2)      + __x, (renderY - _y /   2)     + __y,  0.0f,   0, 0, 0, 0.0f, 1.0f,
+        (renderX + _x - _x / 2) + __x, (renderY - _y /   2)     + __y,  0.0f,   0, 0, 0, 1.0f, 1.0f,
+        (renderX + _x - _x / 2) + __x, (renderY + _y -  _y / 2) + __y,  0.0f,   0, 0, 0, 1.0f, 0.0f
     };
 
     GLuint indicies[] =
