@@ -154,13 +154,12 @@ static PyObject* init(PyObject* self, PyObject* args){
     glfwSetMouseButtonCallback(window, mouseCallback);
 
     gladLoadGL();
-    glViewport(0, 0, x, y);
-    glMatrixMode(GL_PROJECTION);
-    float aspect = (float)x / (float)y;
-    glOrtho(-aspect, aspect, -1, 1, -1, 1);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    gluOrtho2D(0, x, y, 0);
+    // glViewport(0, 0, x, y);
+    // float aspect = (float)x / (float)y;
+    // glMatrixMode(GL_PROJECTION);
+    // glLoadIdentity();
+    // glOrtho(0, x, y, 0, 0, 1);
 
     windowX = x;
     windowY = y;

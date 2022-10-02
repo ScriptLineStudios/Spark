@@ -18,7 +18,7 @@ class Game:
         spark.init("Platformer Collisions Example", 600, 600, False)
 
         self.key_presses = {"a": False, "d": False}
-        self.player = Player(x=0.4, y=0.2, width=20, height=20, color=(255, 0, 0))
+        self.player = Player(x=0.0, y=0.2, width=20, height=20, color=(255, 0, 0))
 
         self.running = True
 

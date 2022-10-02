@@ -12,7 +12,7 @@ from tile import Tile
 
 
 class Player:
-    SPEED = 0.001
+    SPEED = 0.01
     JUMP_HEIGHT = 0.07
 
     def __init__(self, x, y, width, height, color) -> None:
@@ -48,14 +48,12 @@ class Player:
         player_rect[0][0] += movement["horizontal"]
         tiles = self.get_colliding_tiles(map_tiles, player_rect)
         for tile in tiles:
-            print(tile.collision(player_rect))
             if tile.collision(player_rect):
-                pass
-                # if movement["horizontal"] > 0:
-                #     print(player_rect[0][0], tile.rect[0][0])
-                #     player_rect[0][0] = tile.rect[0][0] 
-                # if movement["horizontal"] < 0:
-                #     player_rect[0][0] = tile.rect[0][0] 
+                if movement["horizontal"] > 0:
+                    #player_rect[0][0] = tile.rect[0][0] - (player_rect[2][0] / 500) * 2
+                    player_rect[0][0] = tile.rect[0][0] + (tile.rect[2][0] / 500) * 2
+                if movement["horizontal"] < 0:
+                    player_rect[0][0] = tile.rect[0][0] + (tile.rect[2][0] / 500) * 2
 
         '''self.is_on_ground = False
         player_rect[0][1] -= movement["vertical"]
@@ -63,12 +61,11 @@ class Player:
         for tile in tiles:
             if tile.collision(player_rect):
                 if movement["vertical"] > 0:
-                    player_rect[0][1] = tile.rect[0][1] + (tile.rect[2][1] / 600) * 2
-
+                    player_rect[0][1] = tile.rect[0][1] - (player_rect[2][1] / 600) * 2
                     self.is_on_ground = True
                     self.y_velocity = 0.03
                 if movement["vertical"] < 0:
-                    player_rect[0][1] = tile.rect[0][1] - (tile.rect[2][1] / 600) * 2.5'''
+                    player_rect[0][1] = tile.rect[0][1] - (tile.rect[2][1] / 600)'''
 
         return player_rect
 

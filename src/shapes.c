@@ -19,13 +19,13 @@ static PyObject *collideRect(PyObject *self, PyObject*args) {
         return NULL;
     }
 
-    float rect1_x = _rect1_x;
-    float rect1_y = _rect1_y;
+    float rect1_x = _rect1_x / (windowX / 2);
+    float rect1_y = _rect1_y / (windowY / 2);
     float rect1_w = _rect1_w;
     float rect1_h = _rect1_h;
 
-    float rect2_x = _rect2_x;
-    float rect2_y = _rect2_y;
+    float rect2_x = _rect2_x / (windowX / 2);
+    float rect2_y = _rect2_y / (windowY / 2);
     float rect2_w = _rect2_w;
     float rect2_h = _rect2_h;
 
@@ -63,21 +63,21 @@ static PyObject *renderRect(PyObject* self, PyObject* args, PyObject* kwargs){
     float colorG = g;
     float colorB = b;
 
-    float renderX = x;
-    float renderY = y;
+    float renderX = x / (windowX / 2);
+    float renderY = y / (windowY / 2);
 
     float _y = (size_y/windowY) * 2;
     float _x = (size_x/windowX) * 2;
 
     float __y = (size_y/windowY);
-    float __x = (size_x/windowY);
+    float __x = (size_x/windowX);
 
-    GLfloat verticies[] =
+    GLfloat verticies[] = 
     {
-        (renderX - _x / 2) + __x,      (renderY + _y -  _y  /   2) - __y,  0.0f,   colorR, colorG, colorB, 0.0f, 0.0f, 
-        (renderX - _x / 2) + __x,      (renderY - _y /   2) - __y,         0.0f,   colorR, colorG, colorB, 0.0f, 1.0f,
-        (renderX + _x - _x / 2) + __x, (renderY - _y /   2) - __y,         0.0f,   colorR, colorG, colorB, 1.0f, 1.0f,
-        (renderX + _x - _x / 2) + __x, (renderY + _y -  _y  /   2) - __y,  0.0f,   colorR, colorG, colorB, 1.0f, 0.0f
+        (renderX - _x / 2)      + __x, (renderY + _y -  _y / 2) + __y,  0.0f,   colorR, colorG, colorB, 0.0f, 0.0f, 
+        (renderX - _x / 2)      + __x, (renderY - _y /   2)     + __y,  0.0f,   colorR, colorG, colorB, 0.0f, 1.0f,
+        (renderX + _x - _x / 2) + __x, (renderY - _y /   2)     + __y,  0.0f,   colorR, colorG, colorB, 1.0f, 1.0f,
+        (renderX + _x - _x / 2) + __x, (renderY + _y -  _y / 2) + __y,  0.0f,   colorR, colorG, colorB, 1.0f, 0.0f
     };
 
     GLuint indicies[] =

@@ -8,7 +8,7 @@ clock = pygame.time.Clock()
 img = pygame.image.load("shaders/player_walk2.png")
 
 rect = pygame.Rect(10, 10, 100, 100)
-rect1 = pygame.Rect(400, 400, 800, 800)
+rect1 = pygame.Rect(400, 400, 100, 100)
 
 
 while True:
@@ -19,22 +19,18 @@ while True:
             pygame.quit()
             break
 
-    rect1.x += pygame.key.get_pressed()[pygame.K_d]
-    rect1.x -= pygame.key.get_pressed()[pygame.K_a]
+    rect1.x += pygame.key.get_pressed()[pygame.K_d] * 10
+    rect1.x -= pygame.key.get_pressed()[pygame.K_a] * 10
 
-    rect1.y += pygame.key.get_pressed()[pygame.K_s]
-    rect1.y -= pygame.key.get_pressed()[pygame.K_w]
+    rect1.y += pygame.key.get_pressed()[pygame.K_s] * 10
+    rect1.y -= pygame.key.get_pressed()[pygame.K_w] * 10
 
-    #pygame.draw.rect(display, (100, 0, 0), rect)
+    pygame.draw.rect(display, (100, 0, 0), rect)
     pygame.draw.rect(display, (0, 100, 0), rect1)
-
-    if (rect.x < rect1.x + rect1.w and
-        rect.x + rect.w > rect1.x and
-        rect.y < rect1.y + rect1.h and
-        rect.h + rect.y > rect1.y):
-            print("yay")
-    else:
-        print("no")
+    
+    print(rect.colliderect(rect1))
+    if rect.colliderect(rect1):
+        rect1.left = rect.right
 
 
     pygame.display.set_caption(f"{clock.get_fps()}")
