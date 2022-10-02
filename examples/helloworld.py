@@ -1,5 +1,6 @@
 import spark
 
+
 with open("shaders/fragmentShaderExample.glsl") as f:
     fragment_src = f.read() 
 with open("shaders/vertexShaderExample.glsl") as f:
@@ -25,7 +26,7 @@ while spark.not_window_close():
     if spark.key.key_is_pressed(spark.key.D):
         x += 0.01
 
-    spark.render_image(texture1, (0.4, 0), (255, 0, 0), 200)
-    spark.render_image(texture, (x, 0), (255, 0, 0), size)
+    spark.render_image(texture1, (0.4, 0), (200, 200))
+    spark.render_image(texture, (x, 0), (72, 72))
 
     spark.update()

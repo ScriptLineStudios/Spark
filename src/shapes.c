@@ -32,10 +32,10 @@ static PyObject *collideRect(PyObject *self, PyObject*args) {
     float __x = windowX / 2;
     float __y = windowY / 2;
 
-    if (rect1_x * __x < rect2_x * __x + rect2_w &&
-        rect1_x * __x + rect1_w > rect2_x * __x &&
-        rect1_y * __y < rect2_y * __y + rect2_h &&
-        rect1_h + rect1_y * __y > rect2_y * __y)
+    if (rect1_x * __x     < rect2_x * __x     + rect2_w &&
+        rect1_x * __x     + rect1_w > rect2_x * __x     &&
+        rect1_y * __y     < rect2_y * __y     + rect2_h &&
+        rect1_h + rect1_y * __y     > rect2_y * __y)
     {
         Py_INCREF(Py_True);
         return Py_True;
@@ -70,16 +70,14 @@ static PyObject *renderRect(PyObject* self, PyObject* args, PyObject* kwargs){
     float _x = (size_x/windowX) * 2;
 
     float __y = (size_y/windowY);
-    float __x = (size_y/windowY);
-
-
+    float __x = (size_x/windowY);
 
     GLfloat verticies[] =
     {
-        (renderX- _x / 2) + __x,      (renderY+_y - _y / 2) - __y,           0.0f,   colorR, colorG, colorB, 0.0f, 0.0f, 
-        (renderX- _x / 2)+ __x,      (renderY- _y / 2)- __y,                          0.0f,   colorR, colorG, colorB, 0.0f, 1.0f,
-        (renderX+_x- _x / 2)+ __x, (renderY- _y / 2)- __y,                0.0f,   colorR, colorG, colorB, 1.0f, 1.0f,
-        (renderX+_x- _x / 2)+ __x, (renderY+_y- _y / 2)- __y, 0.0f,   colorR, colorG, colorB, 1.0f, 0.0f
+        (renderX - _x / 2) + __x,      (renderY + _y -  _y  /   2) - __y,  0.0f,   colorR, colorG, colorB, 0.0f, 0.0f, 
+        (renderX - _x / 2) + __x,      (renderY - _y /   2) - __y,         0.0f,   colorR, colorG, colorB, 0.0f, 1.0f,
+        (renderX + _x - _x / 2) + __x, (renderY - _y /   2) - __y,         0.0f,   colorR, colorG, colorB, 1.0f, 1.0f,
+        (renderX + _x - _x / 2) + __x, (renderY + _y -  _y  /   2) - __y,  0.0f,   colorR, colorG, colorB, 1.0f, 0.0f
     };
 
     GLuint indicies[] =
