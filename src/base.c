@@ -24,6 +24,14 @@ int FPS;
 GLuint shaders[256];
 int shader_index = 0;
 
+GLuint indicies[] =
+{
+    0, 2, 1,
+    0, 3, 2,
+};
+
+GLuint VAO, VBO, EBO;
+
 /*
 Shader layout
 -------------
@@ -124,6 +132,10 @@ int texture_index = 0;
 int windowX;
 int windowY;
 
+GLuint using_shader = 0;
+GLuint using_texture = 0;
+
+
 static PyObject* init(PyObject* self, PyObject* args){
     const char *title;
     int x;
@@ -155,11 +167,18 @@ static PyObject* init(PyObject* self, PyObject* args){
 
     gladLoadGL();
     gluOrtho2D(0, x, y, 0);
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
     // glViewport(0, 0, x, y);
     // float aspect = (float)x / (float)y;
     // glMatrixMode(GL_PROJECTION);
     // glLoadIdentity();
     // glOrtho(0, x, y, 0, 0, 1);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     windowX = x;
     windowY = y;
