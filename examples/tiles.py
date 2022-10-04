@@ -99,9 +99,6 @@ while spark.not_window_close():
     else:
         air_timer += 1
 
-<<<<<<< HEAD
     spark.set_title(str(spark.get_fps()))
-=======
->>>>>>> 2ddf9eb6d42a8ab9df0289e229e1b4ca3a697ebf
     spark.render_image(player_img, player_rect[0], player_rect[2])
     spark.update()
