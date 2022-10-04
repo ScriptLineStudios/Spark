@@ -92,13 +92,7 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
         (renderX - _x / 2)      + __x, (renderY + _y -  _y / 2) + __y,  0.0f,   0, 0, 0, 0.0f, 0.0f, 
         (renderX - _x / 2)      + __x, (renderY - _y /   2)     + __y,  0.0f,   0, 0, 0, 0.0f, 1.0f,
         (renderX + _x - _x / 2) + __x, (renderY - _y /   2)     + __y,  0.0f,   0, 0, 0, 1.0f, 1.0f,
-        (renderX + _x - _x / 2) + __x, (renderY + _y -  _y / 2) + __y,  0.0f,   0, 0, 0, 1.0f, 0.0f
-    };
-
-    GLuint indicies[] =
-    {
-        0, 2, 1,
-        0, 3, 2,
+        (renderX + _x - _x / 2) + __x, (renderY + _y -  _y / 2) + __y,  0.0f,   0, 0, 0, 1.0f, 0.0f,
     };
 
     GLuint VAO, VBO, EBO;
@@ -108,8 +102,6 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
 	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
-
-
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
@@ -131,8 +123,13 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    glUseProgram(shaders[0]);
-    glBindTexture(GL_TEXTURE_2D, textures[index]);
+    if (using_shader != shaders[0])
+        glUseProgram(shaders[0]);
+    using_shader = shaders[0];
+
+    if (using_texture != textures[index])
+        glBindTexture(GL_TEXTURE_2D, textures[index]);
+    using_texture = textures[index];
 
     glBindVertexArray(VAO);  //Render Triangle
     glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);

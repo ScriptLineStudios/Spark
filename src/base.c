@@ -124,6 +124,16 @@ int texture_index = 0;
 int windowX;
 int windowY;
 
+GLuint using_shader = 0;
+GLuint using_texture = 0;
+GLuint using_vao = 0;
+
+GLuint indicies[] =
+{
+    0, 2, 1,
+    0, 3, 2,
+};
+
 static PyObject* init(PyObject* self, PyObject* args){
     const char *title;
     int x;
@@ -154,7 +164,7 @@ static PyObject* init(PyObject* self, PyObject* args){
     glfwSetMouseButtonCallback(window, mouseCallback);
 
     gladLoadGL();
-    gluOrtho2D(0, x, y, 0);
+    //gluOrtho2D(0, x, y, 0);
     // glViewport(0, 0, x, y);
     // float aspect = (float)x / (float)y;
     // glMatrixMode(GL_PROJECTION);

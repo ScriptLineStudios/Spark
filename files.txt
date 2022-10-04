@@ -1,0 +1,5 @@
+/usr/lib/python3.8/site-packages/spark.cpython-38-x86_64-linux-gnu.so
+/usr/lib/python3.8/site-packages/spark-1.0-py3.8.egg-info/dependency_links.txt
+/usr/lib/python3.8/site-packages/spark-1.0-py3.8.egg-info/PKG-INFO
+/usr/lib/python3.8/site-packages/spark-1.0-py3.8.egg-info/SOURCES.txt
+/usr/lib/python3.8/site-packages/spark-1.0-py3.8.egg-info/top_level.txt
