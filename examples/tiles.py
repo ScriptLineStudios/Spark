@@ -15,7 +15,7 @@ game_map = [['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'
             ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
             ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1']]
 
-tile_img = spark.create_image("block1.png")
+tile_img = spark.create_image("block1.png") 
 dirt_img = spark.create_image("block0.png")
 player_img = spark.create_image("player_idle1.png")
 

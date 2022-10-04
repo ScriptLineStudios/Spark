@@ -140,35 +140,31 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
 
 
 static PyMethodDef base_methods[] = {
-    {"init", (PyCFunction)init, METH_VARARGS, "Inits"},
-    {"version", (PyCFunction)version, METH_NOARGS, "Returns version"},
-    {"not_window_close", (PyCFunction)windowClose, METH_NOARGS, "Close"},
-    {"clear", (PyCFunction)clearScreen, METH_VARARGS, "Clears Screen"},
-    {"render_image", (PyCFunction)renderTexture, METH_VARARGS, "Loads a new rect into memory"},
-    {"create_image", (PyCFunction)createTexture, METH_VARARGS, "Loads a new rect into memory"},
-    {"get_fps", (PyCFunction)getFps, METH_NOARGS, "Loads a new rect into memory"},
-    {"update", (PyCFunction)render, METH_NOARGS, "Render"},
-    {"set_title", (PyCFunction)setTitle, METH_VARARGS, "Loads a new rect into memory"},
-    {"load_shader", (PyCFunction)loadShader, METH_VARARGS, "Loads a new rect into memory"},
-    {"send_float", (PyCFunction)sendFloat, METH_VARARGS, "Loads a new rect into memory"},
-    {"send_image", (PyCFunction)sendTexture, METH_VARARGS, "Loads a new rect into memory"},
-    {"mouse_pos", (PyCFunction)mouseGetPos, METH_NOARGS, "Loads a new rect into memory"},
+    {"init", (PyCFunction)init, METH_VARARGS, "Initializes the display with a specified width, height and title."},
+    {"version", (PyCFunction)version, METH_NOARGS, "Returns current Spark version"},
+    {"not_window_close", (PyCFunction)windowClose, METH_NOARGS, "Signals weather or not the window should close. eg when the exit button is pressed. Typically used for creating main loops."},
+    {"clear", (PyCFunction)clearScreen, METH_VARARGS, "Clears the display"},
+    {"render_image", (PyCFunction)renderTexture, METH_VARARGS, "Renders an image at a specified location and with a specified size"},
+    {"create_image", (PyCFunction)createTexture, METH_VARARGS, "Loads an image into memory"},
+    {"get_fps", (PyCFunction)getFps, METH_NOARGS, "Returns a float, representing the fps as per the last rendered frame"},
+    {"update", (PyCFunction)render, METH_NOARGS, "Renders all objects to the display"},
+    {"set_title", (PyCFunction)setTitle, METH_VARARGS, "Sets the window title"},
+    {"load_shader", (PyCFunction)loadShader, METH_VARARGS, "Loads a new shader into memory"},
+    {"send_float", (PyCFunction)sendFloat, METH_VARARGS, "Sends a float value to the shader at a specified uniform"},
+    {"send_image", (PyCFunction)sendTexture, METH_VARARGS, "Sends an image to the shader at a specified uniform"},
+    {"mouse_pos", (PyCFunction)mouseGetPos, METH_NOARGS, "Returns the x, y of the current mouse position"},
     {NULL, NULL, 0, NULL}
-
-
 };
 
 static PyMethodDef shape_methods[] = {
-    {"render_rect", (PyCFunction)renderRect, METH_VARARGS, "Loads a new rect into memory"},
-    {"collide_rect", (PyCFunction)collideRect, METH_VARARGS, "Loads a new rect into memory"},
+    {"render_rect", (PyCFunction)renderRect, METH_VARARGS, "Renders a rectangle with a specified position, color and size"},
+    {"collide_rect", (PyCFunction)collideRect, METH_VARARGS, "Returns a boolean specifying weather or not two rectangles are colliding with each other or not"},
 };
-
 
 static PyMethodDef key_methods[] = {
     {"key_is_pressed", (PyCFunction)keyIsPressed, METH_VARARGS, "Checks key pressed"},
     {"mouse_is_pressed", (PyCFunction)mouseIsClicked, METH_VARARGS, "Checks if mouse pressed"},
 };
-
 
 static struct PyModuleDef spark = {
     PyModuleDef_HEAD_INIT,
