@@ -68,6 +68,15 @@ static PyObject* createTexture(PyObject* self, PyObject* args){
 
 }
 
+#define VERTEX_ONE(x, y) (x - _x / 2) + __x, \
+            (y + _y -  _y / 2) + __y,  0.0f,   0, 0, 0, 0.0f, 0.0f
+#define VERTEX_TWO(x, y) (x - _x / 2) + __x, \
+            (y - _y / 2) + __y,  0.0f,   0, 0, 0, 0.0f, 1.0f
+#define VERTEX_THREE(x, y) (x + _x - _x / 2) + __x, \
+            (y - _y / 2) + __y,  0.0f,   0, 0, 0, 1.0f, 1.0f
+#define VERTEX_FOUR(x, y) (x + _x - _x / 2) + __x, \
+            (y + _y - _y / 2) + __y,  0.0f,   0, 0, 0, 1.0f, 0.0f,
+
 static PyObject* renderTexture(PyObject* self, PyObject* args){
     float x, y;
     float size_x;
@@ -89,10 +98,10 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
 
     GLfloat verticies[] = 
     {
-        (renderX - _x / 2)      + __x, (renderY + _y -  _y / 2) + __y,  0.0f,   0, 0, 0, 0.0f, 0.0f, 
-        (renderX - _x / 2)      + __x, (renderY - _y /   2)     + __y,  0.0f,   0, 0, 0, 0.0f, 1.0f,
-        (renderX + _x - _x / 2) + __x, (renderY - _y /   2)     + __y,  0.0f,   0, 0, 0, 1.0f, 1.0f,
-        (renderX + _x - _x / 2) + __x, (renderY + _y -  _y / 2) + __y,  0.0f,   0, 0, 0, 1.0f, 0.0f,
+        VERTEX_ONE(renderX, renderY),
+        VERTEX_TWO(renderX, renderY),
+        VERTEX_THREE(renderX, renderY),
+        VERTEX_FOUR(renderX, renderY)
     };
 
     GLuint VAO, VBO, EBO;
