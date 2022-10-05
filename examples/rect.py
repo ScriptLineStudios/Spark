@@ -39,20 +39,6 @@ while spark.not_window_close():
 #    spark.shapes.render_rect(rect2[0], rect2[1], rect2[2])   
     #spark.shapes.render_rect(rect1[0], rect1[1], rect1[2])   
     spark.render_image(img, rect2[0], rect2[2]) 
-
-    for tile in tiles:
-        spark.shapes.render_rect(tile[0], tile[1], tile[2])   
-        if spark.shapes.collide_rect(tile, rect2):
-            print(time)
-
-    if spark.shapes.collide_rect(rect1, rect2):
-        pass
-        #rect2[0][0] = rect1[0][0] + rect1[2][0]
-        #rect2[0][0] = rect1[0][0] - rect2[2][0] 
-
-        #rect2[0][1] = rect1[0][1] - rect2[2][1]
-        #rect2[0][1] = rect1[0][1] + rect1[2][1]
-
     
 
     spark.set_title(str(spark.get_fps()))

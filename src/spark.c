@@ -77,6 +77,8 @@ static PyObject* createTexture(PyObject* self, PyObject* args){
 #define VERTEX_FOUR(x, y) (x + _x - _x / 2) + __x, \
             (y + _y - _y / 2) + __y,  0.0f,   0, 0, 0, 1.0f, 0.0f,
 
+#define SQUARE(x, y) VERTEX_ONE(x, y), VERTEX_TWO(x, y), VERTEX_THREE(x, y), VERTEX_FOUR(x, y)
+
 static PyObject* renderTexture(PyObject* self, PyObject* args){
     float x, y;
     float size_x;
@@ -98,10 +100,16 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
 
     GLfloat verticies[] = 
     {
-        VERTEX_ONE(renderX, renderY),
-        VERTEX_TWO(renderX, renderY),
-        VERTEX_THREE(renderX, renderY),
-        VERTEX_FOUR(renderX, renderY)
+        SQUARE(renderX, renderY)
+    };
+
+    GLuint indicies[] =
+    {
+        0, 2, 1,
+        0, 3, 2,
+
+        4, 6, 5,
+        4, 7, 6,
     };
 
     GLuint VAO, VBO, EBO;
@@ -141,12 +149,11 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
     using_texture = textures[index];
 
     glBindVertexArray(VAO);  //Render Triangle
-    glDrawElements(GL_TRIANGLES,4,GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
     Py_INCREF(Py_None);                       
     return Py_None; 
 }
-
 
 static PyMethodDef base_methods[] = {
     {"init", (PyCFunction)init, METH_VARARGS, "Initializes the display with a specified width, height and title."},

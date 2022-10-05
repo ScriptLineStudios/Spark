@@ -128,12 +128,6 @@ GLuint using_shader = 0;
 GLuint using_texture = 0;
 GLuint using_vao = 0;
 
-GLuint indicies[] =
-{
-    0, 2, 1,
-    0, 3, 2,
-};
-
 static PyObject* init(PyObject* self, PyObject* args){
     const char *title;
     int x;
