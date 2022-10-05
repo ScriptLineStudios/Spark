@@ -141,7 +141,7 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
     using_texture = textures[index];
 
     glBindVertexArray(VAO);  //Render Triangle
-    glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES,4,GL_UNSIGNED_INT, 0);
 
     Py_INCREF(Py_None);                       
     return Py_None; 
