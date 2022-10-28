@@ -25,6 +25,7 @@ while spark.not_window_close():
 ```
 pip install git+https://github.com/ScriptLineStudios/Spark/
 ```
+## WARNING: THIS IS STILL A WORK IN PROGRESS. THINGS MAY CHANGE OR BREAK ##
 
 
 
