@@ -11,6 +11,7 @@
 #include "base.c"
 #include "shapes.c"
 #include "shaders.c"
+#include "rectangle.c"
 
 static PyObject *mouseGetPos(PyObject *self) {
     double xpos, ypos;
@@ -258,6 +259,17 @@ PyMODINIT_FUNC PyInit_spark(void){
 
     Py_INCREF(shapes);
     PyModule_AddObject(base, "shapes", shapes);
+
+    if (PyType_Ready(&rectangleType) < 0) {
+        return NULL;
+    }
+
+    Py_INCREF(&rectangleType);
+    if (PyModule_AddObject(base, "Rectangle", (PyObject *)&rectangleType)) {
+        Py_DECREF(&rectangleType);
+        Py_DECREF(&base);
+        return NULL;
+    }
     
     return base;
 }

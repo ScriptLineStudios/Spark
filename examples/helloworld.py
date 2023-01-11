@@ -22,9 +22,9 @@ while spark.not_window_close():
     spark.set_title(str(spark.get_fps()))
 
     if spark.key.key_is_pressed(spark.key.A):
-        x -= 0.01
+        x -= 1
     if spark.key.key_is_pressed(spark.key.D):
-        x += 0.01
+        x += 1
 
     spark.render_image(texture1, (0.4, 0), (200, 200))
     spark.render_image(texture, (x, 0), (72, 72))

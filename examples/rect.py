@@ -19,6 +19,8 @@ img = spark.create_image("shaders/BOSS.png")
 moving_left = False
 moving_right = False
 
+scroll = [0, 0]
+
 time =0
 while spark.not_window_close():
     moving_left = False
@@ -35,11 +37,8 @@ while spark.not_window_close():
     if spark.key.key_is_pressed(spark.key.S):
         rect2[0][1] -= 5
 
-    #spark.shapes.render_rect(rect1[0], rect1[1], rect1[2])
-#    spark.shapes.render_rect(rect2[0], rect2[1], rect2[2])   
-    #spark.shapes.render_rect(rect1[0], rect1[1], rect1[2])   
     spark.render_image(img, rect2[0], rect2[2]) 
-    
 
-    spark.set_title(str(spark.get_fps()))
+    print(rect2)
+    
     spark.update()
