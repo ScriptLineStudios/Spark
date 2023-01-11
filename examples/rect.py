@@ -16,5 +16,5 @@ while spark.not_window_close():
     spark.send_float(shader, "tx", time/10)
     spark.send_float(shader, "ty", time/10)
 
-    spark.render_image(img, (0, 0), (256, 256), shader) 
+    spark.render_image(img, (0, 0), (256, 256)) 
     spark.update()

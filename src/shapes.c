@@ -6,28 +6,27 @@
 #include "../Include/glfw/include/GLFW/glfw3.h"
 #include "../Include/stb/stb_image.h"
 #include "../Include/glfw/deps/glad/gles2.h"
+#include "../Include/spark.h"
 
 static PyObject *collideRect(PyObject *self, PyObject*args) {
-    float _rect1_x, _rect1_y, _rect1_color_r, _rect1_color_g, _rect1_color_b, _rect1_w, _rect1_h;
-    float _rect2_x, _rect2_y, _rect2_color_r, _rect2_color_g, _rect2_color_b, _rect2_w, _rect2_h;
+    rectangleObject *rect1;
+    rectangleObject *rect2;
 
-
-    if (!PyArg_ParseTuple(args, "((ff)(fff)(ff))((ff)(fff)(ff))", &_rect1_x, &_rect1_y, &_rect1_color_r, &_rect1_color_g, 
-                    &_rect1_color_b, &_rect1_w, &_rect1_h, 
-                    &_rect2_x, &_rect2_y, &_rect2_color_r, &_rect2_color_g, &_rect2_color_b, &_rect2_w, &_rect2_h)) 
+    if (!PyArg_ParseTuple(args, "OO", &rect1, &rect2)) 
     {
+        printf("failed!\n");
         return NULL;
     }
 
-    float rect1_x = _rect1_x / (windowX / 2);
-    float rect1_y = _rect1_y / (windowY / 2);
-    float rect1_w = _rect1_w;
-    float rect1_h = _rect1_h;
+    float rect1_x = rect1->rect.x / (windowX / 2);
+    float rect1_y = rect1->rect.y / (windowY / 2);
+    float rect1_w = rect1->rect.w;
+    float rect1_h = rect1->rect.h;
 
-    float rect2_x = _rect2_x / (windowX / 2);
-    float rect2_y = _rect2_y / (windowY / 2);
-    float rect2_w = _rect2_w;
-    float rect2_h = _rect2_h;
+    float rect2_x = rect2->rect.x / (windowX / 2);
+    float rect2_y = rect2->rect.y / (windowY / 2);
+    float rect2_w = rect2->rect.w;
+    float rect2_h = rect2->rect.h;
 
     float __x = windowX / 2;
     float __y = windowY / 2;

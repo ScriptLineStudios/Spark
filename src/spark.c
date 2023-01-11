@@ -84,10 +84,11 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
     float x, y;
     float size_x;
     float size_y;
+    int shader_index = 0;
 
     int index;
 
-    if (!PyArg_ParseTuple(args, "i(ff)(ff)", &index, &x, &y, &size_x, &size_y))
+    if (!PyArg_ParseTuple(args, "i(ff)(ff)|i", &index, &x, &y, &size_x, &size_y, &shader_index))
         return NULL;
 
     float renderX = x / (windowX / 2);
@@ -140,10 +141,8 @@ static PyObject* renderTexture(PyObject* self, PyObject* args){
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    if (using_shader != shaders[0])
-        glUseProgram(shaders[0]);
-    using_shader = shaders[0];
+    
+    glUseProgram(shaders[shader_index]);
 
     if (using_texture != textures[index])
         glBindTexture(GL_TEXTURE_2D, textures[index]);

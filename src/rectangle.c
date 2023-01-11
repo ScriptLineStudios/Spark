@@ -6,16 +6,7 @@
 #include "../Include/glfw/include/GLFW/glfw3.h"
 #include "../Include/stb/stb_image.h"
 #include "../Include/glfw/deps/glad/gles2.h"
-
-typedef struct {
-    double x, y, w, h;
-} Rectangle;
-
-
-typedef struct {
-    PyObject_HEAD Rectangle rect;
-    PyObject *weakreflist;
-} rectangleObject;
+#include "../Include/spark.h"
 
 
 static int __init__(rectangleObject *self, PyObject *args, PyObject *kwds) {
