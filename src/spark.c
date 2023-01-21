@@ -1,6 +1,5 @@
 #include <Python.h>
 #include <stdio.h>
-#include <stb/stb.h>
 #include <stdbool.h>
 
 #include "../Include/glfw/include/GLFW/glfw3.h"

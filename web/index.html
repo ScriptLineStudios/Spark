@@ -9,11 +9,9 @@
         let pyodide = await loadPyodide();
         await pyodide.loadPackage("micropip");
         const micropip = pyodide.pyimport("micropip");
-        await micropip.install("snowballstemmer");
+        await micropip.install("https://github.com/ScriptLineStudios/Spark/raw/main/dist/spark-1.0-cp310-cp310-linux_x86_64.whl");
         await pyodide.runPython(`
-        import snowballstemmer
-        stemmer = snowballstemmer.stemmer('english')
-        print(stemmer.stemWords('go goes going gone'.split()))
+        import spark
       `);
       }
       main();
