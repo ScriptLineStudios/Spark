@@ -1,7 +1,7 @@
 
 from setuptools import setup, Extension
 
-base = Extension("spark", sources = ["src/spark.c", "/usr/include/glad/glad.c", "src/stb.c"], 
+base = Extension("spark", sources = ["src/spark.c", "src/glad.c", "src/stb.c"], 
     extra_link_args = ["-Wall", "-lGL", "-lGLU", "-lglut", "-lglfw", "-lX11", "-lXxf86vm", "-lXrandr", "-lpthread",
      "-lXi", "-ldl", "-lXinerama", "-lXcursor"])
 
